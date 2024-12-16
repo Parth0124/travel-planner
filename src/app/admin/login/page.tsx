@@ -2,8 +2,8 @@ import React from 'react'
 
 const login_page = () => {
   return (
-    <div>
-      <h1>Login</h1>
+    <div className='h-[100vh] w-full flex items-center justify-center bg-cover bg-center bg-no-repeat'>
+      
     </div>
   )
 }
