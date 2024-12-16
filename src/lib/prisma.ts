@@ -15,3 +15,5 @@ else{
     }
     prisma = global.prisma
 }
+
+export default prisma
