@@ -4,13 +4,14 @@ import axios from "axios";
 import { Listbox, ListboxItem } from "@nextui-org/react";
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import { Input, Tab, Tabs } from "@nextui-org/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
 import React from "react";
 import { apiClient } from "@/lib";
 import { ADMIN_API_ROUTES } from "@/utils";
+import { ScrapingQueue } from "@/components/admin/scraping-queue";
+import { CurrentlyScrapingTable } from "./components/currently-scrapping-table";
 
-// Define the response type for the API
 type GeoNamesResponse = {
   geonames: { name: string }[];
 };
@@ -20,6 +21,7 @@ const ScrapeData = () => {
   const [selectedCity, setSelectedCity] = useState<string | undefined>(
     undefined
   );
+  const [jobs,setJobs] = useState([])
 
   const searchCities = async (searchString: string) => {
     if (!searchString) {
@@ -59,6 +61,19 @@ const ScrapeData = () => {
     }
   };
 
+  useEffect(() => {
+      const getData = async () => {
+        const data = await apiClient.get(ADMIN_API_ROUTES.JOB_DETAILS);
+  
+        setJobs(data.data.jobs);
+      };
+      const interval = setInterval(() => getData(), 3000);
+  
+      return () => {
+        clearInterval(interval);
+      };
+    }, []);
+
   return (
     <section className="m-10 grid grid-cols-3 gap-5">
       <Card className="col-span-2">
@@ -73,11 +88,11 @@ const ScrapeData = () => {
               <div className="w-full min-h-[200px] max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-5">
                 <Listbox
                   aria-label="Actions"
-                  onAction={(key) => setSelectedCity(key as string)} // `key` is now just the city name
+                  onAction={(key) => setSelectedCity(key as string)} 
                 >
                   {cities.map((city) => (
                     <ListboxItem
-                      key={city} // Unique keys are ensured by deduplication
+                      key={city}
                       textValue={city}
                       color="primary"
                       className="text-primary-500"
@@ -106,6 +121,10 @@ const ScrapeData = () => {
           </Button>
         </CardFooter>
       </Card>
+      <ScrapingQueue />
+      <div className="col-span-3">
+       <CurrentlyScrapingTable jobs={jobs} />
+      </div>
     </section>
   );
 };
