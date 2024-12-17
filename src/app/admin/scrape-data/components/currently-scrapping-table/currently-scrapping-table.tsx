@@ -45,7 +45,6 @@ interface JobType {
   id: string;
   url: string;
   createdAt: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jobType: any;
   status: "active" | "failed" | "complete";
 }
@@ -55,14 +54,12 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([])
   );
-
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "age",
     direction: "ascending",
   });
-
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -94,61 +91,58 @@ export default function CurrentlyScrapingTable({ jobs }: { jobs: JobType[] }) {
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const renderCell = React.useCallback((job: JobType, columnKey: React.Key) => {
     const cellValue = job[columnKey as keyof JobType];
 
-      function formatDateAndTime(inputDate: string) {
-        const date = new Date(inputDate);
+    function formatDateAndTime(inputDate: string) {
+      const date = new Date(inputDate);
 
-        const options = {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-          timeZoneName: "short",
-        } as Intl.DateTimeFormatOptions;
+      const options = {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        timeZone: "UTC",
+      } as Intl.DateTimeFormatOptions;
 
-        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-          date
+      const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+        date
+      );
+
+      return formattedDate;
+    }
+
+    switch (columnKey) {
+      case "url":
+        return (
+          <Link href={cellValue} target="_blank">
+            {cellValue}
+          </Link>
         );
-
-        return formattedDate;
-      }
-      switch (columnKey) {
-        case "url":
-          return (
-            <Link href={cellValue} target="_blank">
-              {cellValue}
-            </Link>
-          );
-        case "jobType":
-          return cellValue.type;
-        case "createdAt":
-          return formatDateAndTime(cellValue);
-        case "status":
-          return (
-            <Chip
-              className="capitalize"
-              color={statusColorMap[job.status]}
-              size="sm"
-              variant="flat"
-            >
-              {cellValue}
-            </Chip>
-          );
-
-        default:
-          return cellValue;
-      }
-    },
-    []
-  );
+      case "jobType":
+        return cellValue.type;
+      case "createdAt":
+        return formatDateAndTime(cellValue);
+      case "status":
+        return (
+          <Chip
+            className="capitalize"
+            color={statusColorMap[job.status]}
+            size="sm"
+            variant="flat"
+          >
+            {cellValue}
+          </Chip>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
