@@ -10,7 +10,6 @@ import { apiClient } from "@/lib";
 import { ADMIN_API_ROUTES } from "@/utils";
 import { useAppStore } from "@/store";
 
-// Import Google font
 const ArchitectsDaughter = Architects_Daughter({
   weight: "400",
   style: "normal",
