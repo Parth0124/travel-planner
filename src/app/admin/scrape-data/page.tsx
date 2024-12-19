@@ -49,7 +49,7 @@ const ScrapeData = () => {
       return;
     }
     try {
-      await apiClient.post(ADMIN_API_ROUTES.CREATE_JOBS, {
+      await axios.post(ADMIN_API_ROUTES.CREATE_JOBS, {
         url:
           "https://packages.yatra.com/holidays/intl/search.htm?destination=" +
           selectedCity,
@@ -63,7 +63,7 @@ const ScrapeData = () => {
 
   useEffect(() => {
       const getData = async () => {
-        const data = await apiClient.get(ADMIN_API_ROUTES.JOB_DETAILS);
+        const data = await axios.get(ADMIN_API_ROUTES.JOB_DETAILS);
   
         setJobs(data.data.jobs);
       };

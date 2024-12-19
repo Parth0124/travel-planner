@@ -9,6 +9,7 @@ import { Architects_Daughter } from "next/font/google";
 import { apiClient } from "@/lib";
 import { ADMIN_API_ROUTES } from "@/utils";
 import { useAppStore } from "@/store";
+import axios from "axios";
 
 const ArchitectsDaughter = Architects_Daughter({
   weight: "400",
@@ -25,7 +26,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await apiClient.post(ADMIN_API_ROUTES.LOGIN, {
+      const response = await axios.post(ADMIN_API_ROUTES.LOGIN, {
         email,
         password,
       });

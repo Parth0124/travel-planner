@@ -8,7 +8,7 @@ export const register = async() => {
     const { connection, jobsQueue } = await import("@/lib");
 
     new Worker("jobsQueue", async (job) => {
-        
+        console.log({job})
     },
       {
         connection, concurrency: 10, removeOnComplete: { count: 1000 }, removeOnFail: { count: 5000 },
